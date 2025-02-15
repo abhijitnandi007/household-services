@@ -172,5 +172,4 @@ cython_debug/
 .pypirc
 =======
 /env
-/backend/pycache
 >>>>>>> 8d54561 ( Initialized private GitHub repository with README and .gitignore)
