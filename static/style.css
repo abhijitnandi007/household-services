@@ -1,0 +1,146 @@
+* {
+    margin: 0px;
+}
+
+#container, #panel {
+    border-radius: 15px;
+    padding: 0.1rem;
+    margin: 0.1rem;
+}
+
+#panel {
+    width: 80%;
+    margin: auto;
+    height: auto;
+}
+
+#input-form {
+    border: 2px solid rgb(115, 115, 118);
+    width: fit-content;
+    height: auto;
+    margin: auto;
+    margin-top: 10px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding: 2rem;
+}
+
+#heading {
+    height: 75px; 
+    padding: 10px; 
+    text-align: center;
+    margin: 0px;
+}
+
+.mb-3 {
+    padding: 12px;
+    margin: 0px 5px 0px 15px;
+}
+
+#image {
+    margin: auto;
+    height: 100px;
+    width: 150px;
+    padding-bottom: 10px;
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom right, #c59b35, #f5e6c8); 
+    background-attachment: fixed;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+
+#campaign {
+    background-color: rgba(255, 255, 255, 0.9); 
+    border: 0px solid rgb(101, 99, 99);
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    padding: 3rem 5rem;
+}
+
+/* Card layout */
+#cards {
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .row-cols-md-3 > * {
+        flex: 0 0 auto;
+        width: 25%;
+    }
+}
+
+.h-100 {
+    height: 105% !important;
+    width: 102% !important;
+}
+
+
+#inf_dash {
+    width: 400px;
+    min-height: 320px;
+    background-color: #f8f9fac5;
+    padding: 20px;
+}
+
+.main-panel {
+    flex: 1;
+    padding: 20px;
+}
+
+.profile-pic {
+    width: 100%;
+    height: auto;
+}
+
+.homepage-bg {
+    background: url('/static/img/background.webp') no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+}
+
+
+.banner {
+    background: linear-gradient(to right, #e58e26, #ffb97d); 
+    background: rgba(243, 138, 39, 0.6);
+    padding: 50px 0;
+    color: white;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+
+}
+
+
+.navbar {
+    background: linear-gradient(to right, #b37525, #e6c085);
+    color: white;
+    border-radius: 8px;
+    
+    
+}
+
+.navbar a {
+    color: white !important;
+}
+
+.navbar a:hover {
+    color: #d4af37 !important; /* Hover effect */
+}
+
+.btn-primary {
+    background-color: #d4af37;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #b18b2c;
+}

@@ -4,7 +4,8 @@ from backend.config import LocalDevelopementConfig
 from backend.models import User,Role
 from backend.resources import api
 from flask_security import Security,SQLAlchemyUserDatastore
-from flask_security import hash_password,auth_required
+from flask_security import hash_password
+import bcrypt
 
 
 def create_app():
