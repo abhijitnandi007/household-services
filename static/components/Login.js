@@ -39,16 +39,13 @@ export default {
                 body: JSON.stringify(this.formdata)
             })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("Login failed");
-                }
                 return response.json();
             })
             .then(data => {
                 if (data["Auth-Token"]) {
                     localStorage.setItem("auth_token", data["Auth-Token"]);
                     localStorage.setItem("id", data.user.id);
-                    localStorage.setItem("role", data.user.roles[0]);
+                    localStorage.setItem("role", data.user.roles[0]);  
                     if(data.user.roles[0] === 'customer'){
                         this.$router.push('/customer');
                     }
@@ -64,10 +61,6 @@ export default {
                     alert(this.message);
                 }
             })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Invalid credentials. Please try again.");
-            });
         }
     }
 }

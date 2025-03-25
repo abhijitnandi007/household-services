@@ -40,8 +40,9 @@ export default {
   methods: {
       redirectToHome() {
           if (this.isAuthenticated) {
-              if (this.userRole === "customer") {
+              if (this.userRole === "customer") { 
                   this.$router.push("/customer");
+                  
               } else if (this.userRole === "professional") {
                   this.$router.push("/professional");
               } else {
@@ -63,6 +64,7 @@ export default {
           localStorage.removeItem("auth_token");
           localStorage.removeItem("id");
           localStorage.removeItem("role");
+          window.location.reload(); 
           this.$router.push("/");
       })
       .catch(error => console.error("Logout failed:", error));

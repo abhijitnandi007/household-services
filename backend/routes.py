@@ -43,17 +43,20 @@ def user_login():
 
     if user:
         if  verify_password(cred["password"], user.password):
-            login_user(user)        #create a session storage with a cookie
-            return jsonify({
-                "message": "Login successful",
-                "Auth-Token": user.get_auth_token(),
-                "user": {
-                    "id": user.id,
-                    "username": user.username,
-                    "email": user.email,
-                    "roles": [role.name for role in user.roles]
-                }
-            }), 200
+            if user.active:
+                login_user(user)        #create a session storage with a cookie
+                return jsonify({
+                    "message": "Login successful",
+                    "Auth-Token": user.get_auth_token(),
+                    "user": {
+                        "id": user.id,
+                        "username": user.username,
+                        "email": user.email,
+                        "roles": [role.name for role in user.roles]
+                    }
+                }), 200
+            else:
+                return jsonify({"message": "Your credentials are being verified, please come back later!"}),403
         else:
             return jsonify({"message": "Invalid password"}), 401
     else:
@@ -90,8 +93,10 @@ def user_home():
     return jsonify({
         "email" : user.email,
         "username" : user.username,
-        "role":user.roles[0].name
+        "role":user.roles[0].name,
+        "active":user.active
     })
+    
 
 # @app.route('/api/pay/<int:id>')       #payment for serivce request
 # @auth_required('token')

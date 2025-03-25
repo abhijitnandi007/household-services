@@ -42,6 +42,7 @@ export default {
             </tbody>
         </table>
         <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()">Create Service</button>
+        <br>
         <!-- Professionals Table -->
         <h3 class="mt-4">Professionals</h3>
         <br>

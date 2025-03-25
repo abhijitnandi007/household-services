@@ -32,7 +32,7 @@ service_req_parser.add_argument('remarks')
 
 # Parser for updating/closing service request
 update_req_parser = reqparse.RequestParser()
-update_req_parser.add_argument('service_status', required=True, choices=('requested', 'assigned', 'closed','completed'))
+update_req_parser.add_argument('service_status', required=True, choices=('requested', 'assigned', 'closed','completed','rejected'))
 update_req_parser.add_argument('rating', type=int)
 update_req_parser.add_argument('comments')
 
@@ -43,7 +43,6 @@ class ServicRequestsApi(Resource):
     def get(self):
         """Fetch all service requests"""
         # print(request.headers)
-        print(current_user.roles)
         service_req_json = [] 
         if "admin" in roles_list(current_user.roles):
             service_requests = ServiceRequest.query.all()
@@ -114,8 +113,10 @@ class ServicRequestsApi(Resource):
             if args["service_status"] == "assigned" and service_request.service_status == "requested":
                 service_request.service_status = "assigned"
             elif args["service_status"] == "closed":
-                service_request.date_of_completion = datetime.now()
+                service_request.date_of_completion = datetime.now().strftime('%Y-%m-%d %H:%M')
                 service_request.service_status = "closed"
+            else:
+                service_request.service_status =  args["service_status"]
         elif "customer" in roles_list(current_user.roles):
             service_request.service_status = args["service_status"]
 
@@ -137,7 +138,6 @@ class ServicRequestsApi(Resource):
     def delete(self, id):
         """Delete a Service Request"""
         service_request = ServiceRequest.query.get(id)
-        print(service_request)
         if not service_request:
             return {"message": "Service request not found"}, 404
         if service_request.service_status == 'assigned':
@@ -283,7 +283,6 @@ class UserApi(Resource):
     def put(self,id):
         args = user_parser.parse_args() 
         user = User.query.get(id)
-        print(args["active"])
          
         try:
             user.active = args["active"]
@@ -299,7 +298,6 @@ class UserApi(Resource):
     @roles_required('admin')
     def delete(self,id):
         user = User.query.get(id)
-        print(user)
         try:
             db.session.delete(user)
             db.session.commit()
@@ -360,6 +358,4 @@ api.add_resource(ServiceApi,'/api/service','/api/service/update/<int:id>','/api/
 api.add_resource(UserApi,'/api/users','/api/users/update/<int:id>','/api/users/delete/<int:id>')
 api.add_resource(PublicServiceApi,'/api/public/service/get')
 api.add_resource(ProfessionalListApi, '/api/professionals/<string:service_name>')
-
-
 

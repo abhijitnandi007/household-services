@@ -22,7 +22,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, nullable=False)
-    created_at = db.Column(db.String, default=datetime.now())
+    created_at = db.Column(db.String, default=datetime.now().strftime('%Y-%m-%d %H:%M'))
     fs_uniquifier = db.Column(db.String(65), unique=True, nullable=False)
     
     roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users', lazy='dynamic'))
@@ -30,7 +30,8 @@ class User(db.Model, UserMixin):
     experience = db.Column(db.Integer, default=0)
     specialization = db.Column(db.String(255))
 
-    service_id = db.Column(db.Integer, db.ForeignKey('services.id', ondelete="SET NULL"), nullable=True)
+    service_id = db.Column(db.Integer, db.ForeignKey('services.id', 
+    ), nullable=True)
     service = db.relationship('Service', backref="professionals")
 
     # Cascade delete service requests & reviews when the user is deleted
@@ -70,9 +71,9 @@ class ServiceRequest(db.Model):
     professional_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete="SET NULL"), nullable=True)
     service_id = db.Column(db.Integer, db.ForeignKey('services.id', ondelete="CASCADE"), nullable=False)
 
-    date_of_request = db.Column(db.String, default=datetime.now())
+    date_of_request = db.Column(db.String, default=datetime.now().strftime('%Y-%m-%d %H:%M'))
     date_of_completion = db.Column(db.String, nullable=False, default='To be Updated Soon')
-    service_status = db.Column(db.String(20), default='requested')  # requested, assigned, closed
+    service_status = db.Column(db.String(20), default='requested')  # requested, assigned, closed,rejected
     remarks = db.Column(db.Text, nullable=True)
 
     customer = db.relationship('User', foreign_keys=[customer_id], back_populates='service_requests')
@@ -90,7 +91,7 @@ class Review(db.Model):
     service_request_id = db.Column(db.Integer, db.ForeignKey('service_requests.id', ondelete="CASCADE"), nullable=False)
     rating = db.Column(db.Integer, nullable=True)
     comments = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.String, default=datetime.now())
+    created_at = db.Column(db.String, default=datetime.now().strftime('%Y-%m-%d %H:%M'))
 
     customer = db.relationship('User', foreign_keys=[customer_id], back_populates='customer_reviews')
     professional = db.relationship('User', foreign_keys=[professional_id], back_populates='professional_reviews')

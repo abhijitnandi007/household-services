@@ -1,51 +1,148 @@
 export default {
-    template:`
-     <div>
-      <h4>Welcome, {{ userdata.username }}</h4>
+    template: `
+    <div class="container mt-4">
+        <h2 class="text-center">Professional Dashboard</h2>
+        
+        <!-- Ongoing Service Requests -->
+        <h3 class="mt-4">Ongoing Service Requests</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Request ID</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Requested On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="request in ongoingRequests" :key="request.id">
+                    <td>{{ request.id }}</td>
+                    <td>{{ request.customer_name }}</td>
+                    <td>{{ request.service_name }}</td>
+                    <td>{{ request.date_of_request }}</td>
+                    <td>
+                        <span class="badge" 
+                            :class="{
+                                'bg-warning': request.service_status === 'requested',
+                                'bg-primary': request.service_status === 'assigned'
+                            }">
+                            {{ request.service_status }}
+                        </span>
+                    </td>
+                    <td>
+                    <span>
+                        <button v-if="request.service_status === 'requested'" class="btn btn-success btn-sm" 
+                                @click="updateStatus(request, 'assigned')">
+                            Accept
+                        </button>
+                        <button v-if="request.service_status === 'requested'" class="btn btn-danger btn-sm" 
+                                @click="updateStatus(request, 'rejected')">
+                            Reject
+                        </button>
+                        </span>
+                        <button v-if="request.service_status === 'assigned'" class="btn btn-danger btn-sm" 
+                                @click="updateStatus(request, 'closed')">
+                            Mark as Completed
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-      <div v-if="userdata.role === 'admin'">
-        <h2>Admin Dashboard</h2>
-        <p>Manage users, approve professionals, and oversee services.</p>
-      </div>
-
-      <div v-else-if="userdata.role === 'customer'">
-        <h2>Customer Dashboard</h2>
-        <p>Book services, view requests, and give feedback.</p>
-      </div>
-
-      <div v-else-if="userdata.role === 'professional'">
-        <h2>Professional Dashboard</h2>
-        <p>Accept or reject service requests and manage your services.</p>
-      </div>
+        <!-- Completed Service Requests -->
+        <h3 class="mt-4">Completed Service Requests</h3>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Request ID</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Requested On</th>
+                    <th>Completed On</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="request in completedRequests" :key="request.id">
+                    <td>{{ request.id }}</td>
+                    <td>{{ request.customer_name }}</td>
+                    <td>{{ request.service_name }}</td>
+                    <td>
+                        <span class="badge bg-success">{{ request.service_status }}</span>
+                    </td>
+                    <td>{{ request.date_of_request }}</td>
+                    <td>{{ request.date_of_completion }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     `,
-    data: function(){
-        return{
-            userdata:{}
+    data() {
+        return {
+            userdata: {},
+            serviceRequests: [],
+        };
+    },
+    computed: {
+        ongoingRequests() {
+            return this.serviceRequests.filter(req => req.service_status === "requested" || req.service_status === "assigned");
+        },
+        completedRequests() {
+            return this.serviceRequests.filter(req => req.service_status === "closed" || req.service_status === "completed");
         }
     },
     mounted(){
-        fetch('/api/home', {
-            method: 'GET',
-            headers:{
-                'Content-Type': 'application/json',
-                'Authentication-Token': localStorage.getItem("auth_token")
-            }
+        this.fetchUserData();
+        this.fetchServiceRequests();  
+    },
+    methods: {
+        fetchUserData(){
+            fetch('/api/home', {
+                method: 'GET',
+                headers:{
+                    'Content-Type': 'application/json',
+                    'Authentication-Token': localStorage.getItem("auth_token")
+                }
+    
+            })
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                this.userdata = data;
+            })
+        },
+        fetchServiceRequests() {
+            fetch('/api/service-request/get', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication-Token': localStorage.getItem("auth_token")
+                }
+            })
+            .then(response =>  response.json())
+            .then(data => {
+                this.serviceRequests = data;
+            })
+        },
 
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch user data");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Fetched user data:", data);  // Debugging
-            this.userdata = data;
-        })
-        .catch(error => {
-            console.error("Error fetching user data:", error);
-            this.userdata = { email: "Error", username: "Could not fetch data" }; // Display error in UI
-        });
+        updateStatus(request,status) {
+            fetch(`/api/service-request/update/${request.id}`,{
+                method:"PUT",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authentication-Token': localStorage.getItem("auth_token")
+                },
+                body: JSON.stringify({service_status:status})
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                this.fetchServiceRequests();
+            })
+        }
     }
+      
 }

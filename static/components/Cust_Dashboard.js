@@ -91,7 +91,6 @@ export default {
         });
         this.user = await userResponse.json();
 
-        // Fetch services
         const serviceResponse = await fetch("/api/service",{
             method: "GET",
             headers: {
@@ -101,7 +100,6 @@ export default {
         });
         this.services = await serviceResponse.json();
 
-        // Fetch service history
         const historyResponse = await fetch("/api/service-request/get", {
             method: "GET",
             headers: {
@@ -115,7 +113,7 @@ export default {
             this.$router.push(`/professionals/${service_name}`);
         },
         
-            // DELETE service request
+
         async deleteService(serviceId) {
             if (confirm("Are you sure you want to delete this service request?")) {
                 const response = await fetch(`/api/service-request/delete/${serviceId}`, {
@@ -131,7 +129,7 @@ export default {
             }
         },
 
-    // SUBMIT Review
+
         async submitReview(history) {
             if (!history.rating || !history.comments) {
                 alert("Please provide both rating and comments.");
