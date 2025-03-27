@@ -5,7 +5,9 @@ export default {
       <h4>Welcome, {{ userdata.username }}</h4>
  <div class="container mt-4">
         <h2 class="text-center">Admin Dashboard</h2>
-
+        <div class="text-end my-2">
+                <button @click="csvExport" class="btn btn-secondary">Download as CSV</button>
+        </div>
         
         <!-- Available services Table -->
         <h3 class="mt-4">Services</h3>
@@ -155,11 +157,11 @@ export default {
                     <button type="submit" class="btn btn-warning btn-sm">{{ editingService ? "Update" : "Create" }}</button>
                     </div>
                     </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
-    </div>
     `,
     data: function(){
         return{
@@ -183,7 +185,7 @@ export default {
         this.fetchservices(),
         this.modalInstance = new bootstrap.Modal(document.getElementById('serviceModal'), {
             keyboard: false
-        });
+        }),
         fetch('/api/home', {
             method: 'GET',
             headers:{
@@ -210,7 +212,6 @@ export default {
             return response.json()
         })
         .then(data =>{
-            console.log(data);
             this.users = data;
             this.categorizeUsers();
         })
@@ -231,7 +232,7 @@ export default {
         .then(data => {
             this.services = data;
         })
-    },
+        },
         categorizeUsers() {
             this.professionals = this.users.filter(user => user.roles.some(role => role.name === "professional"));
             this.customers = this.users.filter(user => user.roles.some(role => role.name === "customer"));
@@ -330,7 +331,16 @@ export default {
                 alert(data.message);
                 window.location.reload();
             })
+        },
+        csvExport(){
+            fetch('/api/export')
+            .then(response => response.json())
+            .then(data => {
+                setTimeout(()=>{
+                    window.location.href = `/api/csv_result/${data.id}`
+                },3000);
+            })
         }
-
     }
+    
 }

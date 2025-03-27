@@ -2,16 +2,10 @@ from flask_restful import Api,Resource,reqparse
 from .models import *
 from flask_security import auth_required,roles_required,roles_accepted,current_user
 from flask import jsonify
+from .utils import roles_list
 
 
 api = Api()
-
-# Local functions
-def roles_list(roles):
-    roles_list=[]
-    for role in roles:
-        roles_list.append(role.name)
-    return roles_list
 
 # Function to calculate average rating
 def get_professional_rating(professional_id):
@@ -22,7 +16,8 @@ def get_professional_rating(professional_id):
     total_ratings = sum([review.rating for review in reviews])
     avg_rating = total_ratings / len(reviews)
 
-    return round(avg_rating, 1) 
+    return round(avg_rating, 1)
+
 
 # Parser for creating service requests
 service_req_parser = reqparse.RequestParser()

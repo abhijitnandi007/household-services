@@ -1,9 +1,10 @@
-from flask import current_app as app,jsonify,request,render_template
+from flask import current_app as app,jsonify,request,render_template,send_from_directory
 from .database import db
 from .models import ServiceRequest,Service
 from flask_security import auth_required,roles_required,roles_accepted,current_user,hash_password,verify_password
 from flask_login import login_user,logout_user
-
+from celery.result import AsyncResult
+from .tasks import csv_report
 
 
 @app.route('/api/register',methods=['POST'])
@@ -96,7 +97,20 @@ def user_home():
         "role":user.roles[0].name,
         "active":user.active
     })
-    
+
+@app.route('/api/export')
+def export_csv():
+    result = csv_report.delay()
+    return jsonify({
+        "id": result.id,
+        "result": result.result,
+
+    })    
+
+@app.route('/api/csv_result/<id>')
+def csv_result(id):
+    res = AsyncResult(id)
+    return send_from_directory('static/downloads', res.result)
 
 # @app.route('/api/pay/<int:id>')       #payment for serivce request
 # @auth_required('token')
