@@ -8,6 +8,7 @@ from flask_security import hash_password
 import bcrypt
 from backend.celery_init import celery_init_app
 from celery.schedules import crontab
+from backend.tasks import daily_reminder
 
 
 def create_app():
@@ -50,14 +51,14 @@ def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(
         # crontab(0, 0, day_of_month='1'),
         crontab(),
-        email_report.s(),
+        email_report.s(0, 0, day_of_month='1'),
         name="Send Monthly Reports"
     )
 
 #daily notification on gchat
     sender.add_periodic_task(
-        crontab(),
-        daily_reminder.s(),
+        crontab(minute='*/2'),
+        daily_reminder.s(minute=0, hour=18),
         name="daily scheduled messages"
     )
 
