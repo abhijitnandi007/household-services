@@ -9,6 +9,7 @@ import bcrypt
 from backend.celery_init import celery_init_app
 from celery.schedules import crontab
 from backend.tasks import daily_reminder
+from backend.cache_config import init_cache
 
 
 def create_app():
@@ -25,6 +26,7 @@ def create_app():
 app = create_app()
 celery = celery_init_app(app)
 celery.autodiscover_tasks()
+init_cache(app)
 
 with app.app_context():
     db.create_all()

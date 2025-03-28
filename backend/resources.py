@@ -3,6 +3,7 @@ from .models import *
 from flask_security import auth_required,roles_required,roles_accepted,current_user
 from flask import jsonify
 from .utils import roles_list
+from .cache_config import cache
 
 
 api = Api()
@@ -32,6 +33,7 @@ update_req_parser.add_argument('rating', type=int)
 update_req_parser.add_argument('comments')
 
 class ServicRequestsApi(Resource):
+    @cache.cached(timeout=300, key_prefix='service_requests') 
     @auth_required('token')
     @roles_accepted('admin','customer','professional')
     # @roles_required('professional')
@@ -91,6 +93,7 @@ class ServicRequestsApi(Resource):
             )
             db.session.add(service_request)
             db.session.commit()
+            cache.delete("service_requests")
             return {"message": "Service request created successfully!"}, 201
         except Exception as e:
             return {"message": f"Error: {str(e)}"}, 400
@@ -127,6 +130,7 @@ class ServicRequestsApi(Resource):
                 db.session.add(review)
     
         db.session.commit()
+        cache.delete("service_requests")
         return {"message": "Service request updated successfully!"}, 200
 
     @auth_required('token')
@@ -140,6 +144,7 @@ class ServicRequestsApi(Resource):
             return {"message": "Professional Assigned,Service request can not be  cancelled"}, 404
         db.session.delete(service_request)
         db.session.commit()
+        cache.delete("service_requests")
         return {"message": "Service request deleted!"}, 200
     #admin creates a services 
 # with the following fields
@@ -236,6 +241,7 @@ user_parser = reqparse.RequestParser()
 user_parser.add_argument('active',type=bool,required =True)
 
 class UserApi(Resource):
+    @cache.cached(timeout=300, key_prefix='users') 
     @auth_required('token')
     @roles_required('admin')
     def get(self):
@@ -283,6 +289,7 @@ class UserApi(Resource):
         try:
             user.active = args["active"]
             db.session.commit()
+            cache.delete("users")
             return {
                 "message" : f"user {user.username} has been {'activated' if args['active'] else 'blocked'}"
             },200
@@ -297,6 +304,7 @@ class UserApi(Resource):
         try:
             db.session.delete(user)
             db.session.commit()
+            cache.delete("users")
             return {
                 "message" : f"user {user.username} has been removed!"
             },200
