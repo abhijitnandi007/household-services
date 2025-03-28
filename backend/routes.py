@@ -4,7 +4,7 @@ from .models import ServiceRequest,Service
 from flask_security import auth_required,roles_required,roles_accepted,current_user,hash_password,verify_password
 from flask_login import login_user,logout_user
 from celery.result import AsyncResult
-from .tasks import csv_report
+from .tasks import csv_report,email_report
 
 
 @app.route('/api/register',methods=['POST'])

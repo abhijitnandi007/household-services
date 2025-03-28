@@ -47,6 +47,7 @@ class ServicRequestsApi(Resource):
             service_requests = current_user.assigned_services
         
         for req in service_requests:
+            this_req = {}
             this_req = {
                 "id": req.id,
                 "service_id": req.service_id,

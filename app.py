@@ -43,11 +43,22 @@ with app.app_context():
 
 from backend.routes import *
 
-@celery.on_after_finalize.connect 
+#monthly report on mail
+@celery.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
+    print("Setting up periodic tasks...")
     sender.add_periodic_task(
-        crontab(minute = '*/2'),
-        monthly_report.s(),
+        # crontab(0, 0, day_of_month='1'),
+        crontab(),
+        email_report.s(),
+        name="Send Monthly Reports"
+    )
+
+#daily notification on gchat
+    sender.add_periodic_task(
+        crontab(),
+        daily_reminder.s(),
+        name="daily scheduled messages"
     )
 
 if __name__== '__main__':

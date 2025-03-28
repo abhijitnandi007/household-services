@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monthly Service Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            text-align: center;
+            color: #444;
+        }
+        .user-details {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f38a27;
+            color: white;
+        }
+        .summary {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Root Service - Monthly Service Report</h2>
+
+        <div class="user-details">
+            <p><strong>Customer Name:</strong> {{ data.username }}</p>
+            <p><strong>Email:</strong> {{ data.email }}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Service Name</th>
+                    <th>Professional</th>
+                    <th>Date of Request</th>
+                    <th>Date of Completion</th>
+                    <th>Price (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for req in data.service_requests %}
+                <tr>
+                    <td>{{ loop.index }}</td> 
+                    <td>{{ req.service_name }}</td>
+                    <td>{{ req.professional_name }}</td>
+                    <td>{{ req.date_of_request }}</td>
+                    <td>{{ req.date_of_completion }}</td>
+                    <td>₹{{ req.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <p>Total Services Used: {{ data.service_requests|length }}</p>
+            <p>Total Amount Paid: ₹{{ data.service_requests | map(attribute='price') | sum }}</p>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for choosing Root Service!</p>
+        </div>
+    </div>
+</body>
+</html>
