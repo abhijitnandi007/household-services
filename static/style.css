@@ -144,3 +144,18 @@ body {
 .btn-primary:hover {
     background-color: #b18b2c;
 }
+
+.brand-logo {
+    height: 40px; /* Adjust based on your logo */
+    width: auto;
+    border-radius: 20px;
+    padding-left: 1ex ;
+
+}
+
+.brand-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #1c5b30; /* Your brand's theme color */
+    font-family: 'Poppins', sans-serif;
+}

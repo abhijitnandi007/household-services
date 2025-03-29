@@ -27,18 +27,29 @@ const app = new Vue({
     router,
     template: `
     <div id="container">
-        <nav-bar></nav-bar>
-        <router-view></router-view>
+        <nav-bar :loggedIn="loggedIn" :userRole="userRole" @logout="handleLogout"></nav-bar>
+        <router-view :loggedIn="loggedIn" @login="handleLogin"></router-view>
     </div>
-    
-
-    
     `,
     data: {
-        section: "frontend"
-
+        loggedIn: !!localStorage.getItem("auth_token"),
+        userRole: localStorage.getItem("role") || null
     },
-    components:{
+    components: {
         "nav-bar": Navbar
+    },
+    methods: {
+        handleLogin(role) {
+            this.loggedIn = true;
+            this.userRole = role;
+            localStorage.setItem("role", role)
+            this.$router.replace(`/${this.userRole}`);
+        },
+        handleLogout() {
+            this.loggedIn = false;
+            this.userRole = null;
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("role");
+        }
     }
-})
+});
