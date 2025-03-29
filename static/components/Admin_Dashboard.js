@@ -2,16 +2,15 @@ export default {
     template:`
      <div>
      <br>
-      <h4>Welcome, {{ userdata.username }}</h4>
+      <h4><strong>Welcome, {{ userdata.username }}</strong></h4>
  <div class="container mt-4">
-        <h2 class="text-center">Admin Dashboard</h2>
         <div class="text-end my-2">
                 <button @click="csvExport" class="btn btn-secondary">Download as CSV</button>
         </div>
         
                 <!-- Professionals Table -->
-        <h3 class="mt-4">Professionals</h3>
-        <div class="mb-3 d-flex">
+        <h3 class="mt-4" class="text-center"><strong>Professionals</strong></h3>
+        <div class="mb-2 d-flex">
       <input 
         type="text" 
         class="form-control search-bar" 
@@ -65,7 +64,7 @@ export default {
 
         
         <!-- Customers Table -->
-        <h3 class="mt-4">Customers</h3>
+        <h3 class="mt-4" class="text-center"><strong>Customers</strong></h3>
         <br>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -103,8 +102,8 @@ export default {
 
         <!-- Available services Table -->
         <span>
-        <h3 class="mt-4">Services</h3>
-        <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()">Create Service</button>
+        <h3 class="mt-4" class="text-center"><strong>Services</strong></h3>
+        <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()"><strong>New Service</strong></button>
         </span>
         <br>
         <table class="table table-bordered table-striped">

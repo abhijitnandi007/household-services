@@ -1,44 +1,55 @@
 export default {
     template: `
     <div class="container mt-4">
-        <h2 class="text-center">Welcome, {{ user.username }}</h2>
+        <h3><strong>Welcome, {{ user.username }}</strong></h3>
         <br>
-        <!-- Services Section -->
+<div id="carouselExampleCaptions" class="carousel slide container-fluid position-relative" data-bs-ride="carousel">
+  
+  <div class="carousel-indicators">
+    <button v-for="(chunk, index) in chunkedServices" :key="index"
+      type="button" data-bs-target="#carouselExampleCaptions"
+      :data-bs-slide-to="index" :class="{ 'active': index === 0 }"
+      :aria-current="index === 0" :aria-label="'Slide ' + (index + 1)">
+    </button>
+  </div>
 
-        <!-- Bootstrap Carousel for Services (Shows 3 items at a time) -->
-        <div id="serviceCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                <div 
-                    class="carousel-item" 
-                    v-for="(chunk, index) in chunkedServices" 
-                    :key="index" 
-                    :class="{ active: index === 0 }"
-                >
-                    <div class="d-flex justify-content-center">
-                        <div class="card text-center mx-2" v-for="service in chunk" :key="service.id" style="width: 14rem;">
-                            <img src="/static/img/service.webp" class="card-img-top" alt="Service">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ service.name }}</h5>
-                                <p class="card-text">Price: ₹{{ service.base_price }}</p>
-                                <button class="btn btn-primary" @click="viewProfessionals(service.name)">
-                                    View
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <div class="carousel-inner">
+    <div v-for="(chunk, index) in chunkedServices" :key="'slide-' + index"
+      class="carousel-item" :class="{ 'active': index === 0 }">
+      
+      <div class="row mx-0 gap-0">  <!-- No space between cards -->
+        <div class="col-md-4 d-flex align-items-stretch p-0" v-for="service in chunk" :key="service.id">
+          <div class="card shadow-sm border-0 w-100">
+            <img src="/static/img/service.webp" class="card-img-top img-fluid"
+              alt="Service" style="height: 250px; object-fit: cover; border-radius: 10px 10px 0 0;">
+            <div class="card-body d-flex flex-column text-center">
+              <h6 class="card-title fw-bold">{{ service.name }}</h6>
+              <p class="card-text text-muted">₹{{ service.base_price }}</p>
+              <button class="btn btn-primary mt-auto w-100" @click="viewProfessionals(service.name)">
+                View Service
+              </button>
             </div>
-
-            <!-- Carousel Controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#serviceCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#serviceCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
+          </div>
         </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Adjusted Navigation Buttons -->
+  <button class="carousel-control-prev custom-carousel-control" type="button"
+    data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+
+  <button class="carousel-control-next custom-carousel-control" type="button"
+    data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+
+</div>
          <!-- Search Bar -->
         <div class="d-flex justify-content-center my-3">
             <input 
@@ -51,7 +62,7 @@ export default {
         <br>
 
         <!-- Service History -->
-        <h3 class="mt-4">Service History</h3>
+        <h3 class="text-center"><strong>Service History</strong></h3>
         <table class="table table-striped mt-4">
             <thead>
                 <tr>

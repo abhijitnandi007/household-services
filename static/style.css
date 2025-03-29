@@ -65,9 +65,6 @@ body {
 }
 
 /* Card layout */
-#cards {
-    display: inline-block;
-}
 
 @media (min-width: 768px) {
     .row-cols-md-3 > * {
@@ -163,4 +160,33 @@ body {
 .search-bar {
     width: 300px;  
     max-width: 100%;
+  }
+
+  .custom-carousel-control {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 60px; 
+    height: 60px;
+    background-color: rgba(0, 0, 0, 0.5); 
+    border-radius: 50%;
+  }
+
+  .carousel-control-prev {
+    left: -60px; 
+  }
+
+  .carousel-control-next {
+    right: -60px; 
+  }
+
+
+  .row.mx-0 {
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
+
+  .col-md-4 {
+    padding: 0;
+    
   }

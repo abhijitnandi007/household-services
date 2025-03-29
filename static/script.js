@@ -6,7 +6,9 @@ import Cust_Dashboard from './components/Cust_Dashboard.js'
 import Admin_Dashboard from './components/Admin_Dashboard.js'
 import Prof_Dashboard from './components/Prof_Dashboard.js'
 import ServiceProfessionals from "./components/Service_by_Prof.js";
-
+import Admin_Stats from './components/Admin_Stats.js'
+import Prof_Stats from './components/Prof_Stats.js'
+import Customer_Stats from './components/Customer_Stats.js'
 
 const routes = [
     {path: '/',component: Home},
@@ -15,7 +17,10 @@ const routes = [
     {path: '/customer',component: Cust_Dashboard},
     {path: '/professional',component: Prof_Dashboard},
     {path: '/admin',component: Admin_Dashboard},
-    {path: "/professionals/:service_name", component: ServiceProfessionals}
+    {path: "/professionals/:service_name", component: ServiceProfessionals},
+    {path: '/adminstats',component: Admin_Stats},
+    {path: '/professionalstats',component: Prof_Stats},
+    {path: '/customerstats',component: Customer_Stats}
 
 ]
 

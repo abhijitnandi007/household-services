@@ -1,7 +1,7 @@
 export default {
     template: `
 <div class="container mt-4">
-        <h2 class="text-center">Available Professionals for: {{ service_name }}</h2>
+        <h2 class="text-center"><strong>Available Professionals for: {{ service_name }}</strong></h2>
         <br><br>
         <table class="table table-striped">
             <thead>

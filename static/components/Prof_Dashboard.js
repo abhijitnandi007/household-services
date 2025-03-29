@@ -1,10 +1,9 @@
 export default {
     template: `
     <div class="container mt-4">
-        <h2 class="text-center">Professional Dashboard</h2>
         
         <!-- Ongoing Service Requests -->
-        <h3 class="mt-4">Ongoing Service Requests</h3>
+        <h3 class="mt-4"><strong>Ongoing Services</strong></h3>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
@@ -25,8 +24,9 @@ export default {
                     <td>
                         <span class="badge" 
                             :class="{
-                                'bg-warning': request.service_status === 'requested',
+                                'bg-warning': request.service_status === 'requested' ,
                                 'bg-primary': request.service_status === 'assigned'
+                                
                             }">
                             {{ request.service_status }}
                         </span>
@@ -52,7 +52,7 @@ export default {
         </table>
 
         <!-- Completed Service Requests -->
-        <h3 class="mt-4">Completed Service Requests</h3>
+        <h3 class="mt-4"><strong>Service History</strong></h3>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
                 <tr>
@@ -65,12 +65,21 @@ export default {
                 </tr>
             </thead>
             <tbody>
+            
                 <tr v-for="request in completedRequests" :key="request.id">
                     <td>{{ request.id }}</td>
                     <td>{{ request.customer_name }}</td>
                     <td>{{ request.service_name }}</td>
                     <td>
-                        <span class="badge bg-success">{{ request.service_status }}</span>
+                        <span class="badge" 
+                        :class="{
+                                'bg-danger': request.service_status === 'rejected',
+                                'bg-success': request.service_status === 'completed',
+                                'bg-success': request.service_status === 'closed'
+
+                                
+                            }">
+                        {{ request.service_status }}</span>
                     </td>
                     <td>{{ request.date_of_request }}</td>
                     <td>{{ request.date_of_completion }}</td>
@@ -90,7 +99,7 @@ export default {
             return this.serviceRequests.filter(req => req.service_status === "requested" || req.service_status === "assigned");
         },
         completedRequests() {
-            return this.serviceRequests.filter(req => req.service_status === "closed" || req.service_status === "completed");
+            return this.serviceRequests.filter(req => req.service_status === "closed" || req.service_status === "completed" || req.service_status === "rejected" );
         }
     },
     mounted(){

@@ -114,6 +114,9 @@ class ServicRequestsApi(Resource):
             elif args["service_status"] == "closed":
                 service_request.date_of_completion = datetime.now().strftime('%Y-%m-%d %H:%M')
                 service_request.service_status = "closed"
+            elif args["service_status"] == "rejected":
+                service_request.service_status = "rejected"
+                service_request.date_of_completion = "Rejected"
             else:
                 service_request.service_status =  args["service_status"]
         elif "customer" in roles_list(current_user.roles):
@@ -357,9 +360,105 @@ class ProfessionalListApi(Resource):
         
         return {"message": "No professionals found for this service"}, 404
 
+class AdminStatsApi(Resource):
+    @auth_required('token')
+    @roles_accepted('admin')
+    def get(self):
+        service_record = {"Pending":0,"Accepted":0,"Completed":0,"Rejected":0}
+        master_record = {"totalActiveProfessionals":0,"totalServiceRequests":0,"totalBlockedUser":0,
+                "totalCustomers":0,"totalProfessionals":0,"averageRating":0,"statusData": service_record.copy()}
+        rating_sum=0
+        total_prof = 0
+        users = User.query.all()
+        for user in users:
+            if not user.active:
+                master_record["totalBlockedUser"]+=1
+            if "customer" in roles_list(user.roles):
+                master_record["totalCustomers"]+=1
+                service_reqs = user.service_requests
+                for req in service_reqs:
+                    master_record["totalServiceRequests"]+=1
+                    if req.service_status=="requested":
+                        master_record["statusData"]["Pending"]+=1
+                    elif req.service_status == "assigned":
+                        master_record["statusData"]["Accepted"]+=1
+                    elif req.service_status == "rejected":
+                        master_record["statusData"]["Rejected"]+=1
+                    else:
+                        master_record["statusData"]["Completed"]+=1
+            if "professional" in roles_list(user.roles):
+                master_record["totalProfessionals"]+=1
+                if user.active:
+                    master_record["totalActiveProfessionals"]+=1
+                
+                try:
+                    rating = int(get_professional_rating(user.id))
+                except Exception as e:
+                    rating = 0 
+                if rating>0:
+                    rating_sum+=rating
+                    total_prof+=1
+        if master_record["totalProfessionals"] > 0:
+            master_record["averageRating"] = rating_sum/total_prof
+        
+        return jsonify(master_record)
+    
+class ProfStatsApi(Resource):
+    @auth_required('token')
+    @roles_required('professional')
+    def get(self):
+        """ Fetch stats for logged-in professional """
+        professional = current_user  # Flask-Security provides current_user
+        stats = {
+            "totalAssigned": 0,
+            "totalCompleted": 0,
+            "totalPending": 0,
+            "totalRejected": 0
+        }
+
+        service_requests = professional.assigned_services
+        for req in service_requests:
+            stats["totalAssigned"] += 1
+            if req.service_status == "completed" or req.service_status == "closed":
+                stats["totalCompleted"] += 1
+            elif req.service_status == "requested":
+                stats["totalPending"] += 1
+            elif req.service_status == "rejected":
+                stats["totalRejected"] += 1
+
+        return jsonify(stats)
+    
+class CustomerStatsApi(Resource):
+    @auth_required('token')
+    @roles_required('customer')
+    def get(self):
+        """ Fetch stats for logged-in customer """
+        customer = current_user  # Flask-Security provides current_user
+        stats = {
+            "totalRequests": 0,
+            "totalCompleted": 0,
+            "totalPending": 0,
+            "totalRejected": 0
+        }
+
+        service_requests = customer.service_requests
+        for req in service_requests:
+            stats["totalRequests"] += 1
+            if req.service_status == "completed":
+                stats["totalCompleted"] += 1
+            elif req.service_status == "requested":
+                stats["totalPending"] += 1
+            elif req.service_status == "rejected":
+                stats["totalRejected"] += 1
+
+        return jsonify(stats)
+
+
 api.add_resource(ServicRequestsApi,'/api/service-request/get','/api/service-request/create','/api/service-request/update/<int:id>','/api/service-request/delete/<int:id>')
 api.add_resource(ServiceApi,'/api/service','/api/service/update/<int:id>','/api/service/delete/<int:id>')
 api.add_resource(UserApi,'/api/users','/api/users/update/<int:id>','/api/users/delete/<int:id>')
 api.add_resource(PublicServiceApi,'/api/public/service/get')
 api.add_resource(ProfessionalListApi, '/api/professionals/<string:service_name>')
-
+api.add_resource(AdminStatsApi,'/api/admin-stats')
+api.add_resource(ProfStatsApi,'/api/prof-stats')
+api.add_resource(CustomerStatsApi, "/api/customer-stats")
