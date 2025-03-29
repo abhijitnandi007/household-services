@@ -9,44 +9,16 @@ export default {
                 <button @click="csvExport" class="btn btn-secondary">Download as CSV</button>
         </div>
         
-        <!-- Available services Table -->
-        <h3 class="mt-4">Services</h3>
-        <br>
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Time Required (hours)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="service in services" :key="service.id">
-                    <td>{{ service.id }}</td>
-                    <td>{{ service.name }}</td>
-                    <td>{{ service.description }}</td>
-                    <td>{{ service.base_price }}</td>
-                    <td>{{ service.time_required }}</td>
-                    <td>
-                        <span>
-                        <button class="btn btn-warning btn-sm " @click="openServiceModal(service) ">
-                            Edit
-                        </button>
-                        <button class="btn btn-danger btn-sm " @click="deleteService(service) ">
-                            Delete
-                        </button>
-                        </span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()">Create Service</button>
-        <br>
-        <!-- Professionals Table -->
+                <!-- Professionals Table -->
         <h3 class="mt-4">Professionals</h3>
+        <div class="mb-3 d-flex">
+      <input 
+        type="text" 
+        class="form-control search-bar" 
+        v-model="searchQuery" 
+        placeholder="Search by name or email"
+      />
+    </div>
         <br>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -63,7 +35,7 @@ export default {
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="professional in professionals" :key="professional.id">
+                <tr v-for="professional in filteredProfessionals" :key="professional.id">
                     <td>{{ professional.id }}</td>
                     <td>{{ professional.username }}</td>
                     <td>{{ professional.email }}</td>
@@ -90,6 +62,8 @@ export default {
             </tbody>
         </table>
 
+
+        
         <!-- Customers Table -->
         <h3 class="mt-4">Customers</h3>
         <br>
@@ -126,6 +100,46 @@ export default {
                 </tr>
             </tbody>
         </table>
+
+        <!-- Available services Table -->
+        <span>
+        <h3 class="mt-4">Services</h3>
+        <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()">Create Service</button>
+        </span>
+        <br>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Time Required (hours)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="service in services" :key="service.id">
+                    <td>{{ service.id }}</td>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description }}</td>
+                    <td>{{ service.base_price }}</td>
+                    <td>{{ service.time_required }}</td>
+                    <td>
+                        <span>
+                        <button class="btn btn-warning btn-sm " @click="openServiceModal(service) ">
+                            Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm " @click="deleteService(service) ">
+                            Delete
+                        </button>
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+
     </div>
     <!-- Modal -->
 <div class="modal fade" id="serviceModal" tabindex="-1" aria-hidden="true">
@@ -177,10 +191,20 @@ export default {
                 base_price: "",
                 time_required:""
             },
-            editingService: false
+            editingService: false,
+            searchQuery: ""
 
         }
     },
+    computed: {
+        filteredProfessionals() {
+          return this.professionals.filter(prof => 
+            prof.username.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            prof.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            prof.service.toLowerCase().includes(this.searchQuery.toLowerCase())
+          );
+        }
+      },
     mounted(){
         this.fetchservices(),
         this.modalInstance = new bootstrap.Modal(document.getElementById('serviceModal'), {

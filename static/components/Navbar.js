@@ -12,6 +12,12 @@ export default {
               <router-link class="nav-link active" v-if="loggedIn && userRole === 'professional'" to="/professional">Home</router-link>
               <router-link class="nav-link active" v-if="loggedIn && userRole === 'admin'" to="/admin">Home</router-link>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link active" v-if="loggedIn && userRole === 'customer'" to="/customerstats">Stats</router-link>
+              <router-link class="nav-link active" v-if="loggedIn && userRole === 'professional'" to="/professionalstats">Stats</router-link>
+              <router-link class="nav-link active" v-if="loggedIn && userRole === 'admin'" to="/adminstats">Stats</router-link>
+              
+            </li>
             <li class="nav-item" v-if="!loggedIn">
               <router-link class="nav-link active" to="/login">Login</router-link>
             </li>

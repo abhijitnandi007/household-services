@@ -146,7 +146,7 @@ body {
 }
 
 .brand-logo {
-    height: 40px; /* Adjust based on your logo */
+    height: 40px; 
     width: auto;
     border-radius: 20px;
     padding-left: 1ex ;
@@ -156,6 +156,11 @@ body {
 .brand-text {
     font-weight: bold;
     font-size: 1.2rem;
-    color: #1c5b30; /* Your brand's theme color */
+    color: #1c5b30; 
     font-family: 'Poppins', sans-serif;
 }
+
+.search-bar {
+    width: 300px;  
+    max-width: 100%;
+  }

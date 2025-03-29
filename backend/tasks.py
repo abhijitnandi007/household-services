@@ -14,10 +14,11 @@ def csv_report():
     with open(f'static/downloads/{csv_file_name}', 'w', newline = "") as csvfile:
         sr_no = 1
         service_csv = csv.writer(csvfile, delimiter = ',')
-        service_csv.writerow(['Sr No.','Service_Name','Requested_By','Date_Of_Request','Serviced_By','Date_of_Completion','Service_Status','Amount','Remarks'])
+        service_csv.writerow(['Sr No.','Service_Name','Requested_By','Date_Of_Request','Serviced_By','Date_of_Completion','Service_Status','Amount','Reviews',])
         for sr in service_request:
+            review_comment = sr.reviews[0].comments if sr.reviews and len(sr.reviews) > 0 else "No Reviewed yet"
             this_req = [sr_no,sr.service.name,sr.customer.username,sr.date_of_request,
-                          sr.professional.username,sr.date_of_completion,sr.service_status,sr.remarks] 
+                          sr.professional.username,sr.date_of_completion,sr.service_status,sr.service.base_price,review_comment] 
             service_csv.writerow(this_req)
             sr_no += 1
     return csv_file_name

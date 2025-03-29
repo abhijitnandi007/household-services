@@ -27,7 +27,7 @@ export default {
                     <td><input type="text" v-if = "professional.id" v-model="remarks[professional.id]" required></td>
                     <td>
                         <button class="btn btn-primary" v-if = "professional.id" @click="bookService(professional)">
-                            Book Service
+                            Book
                         </button>
                     </td>
                 </tr>
