@@ -361,6 +361,7 @@ class ProfessionalListApi(Resource):
         return {"message": "No professionals found for this service"}, 404
 
 class AdminStatsApi(Resource):
+    @cache.cached(timeout=300, key_prefix='admin_stats') 
     @auth_required('token')
     @roles_accepted('admin')
     def get(self):
@@ -404,6 +405,7 @@ class AdminStatsApi(Resource):
         return jsonify(master_record)
     
 class ProfStatsApi(Resource):
+    @cache.cached(timeout=300, key_prefix='prof_stat') 
     @auth_required('token')
     @roles_required('professional')
     def get(self):
@@ -429,6 +431,7 @@ class ProfStatsApi(Resource):
         return jsonify(stats)
     
 class CustomerStatsApi(Resource):
+    @cache.cached(timeout=300, key_prefix='customer_stat') 
     @auth_required('token')
     @roles_required('customer')
     def get(self):
