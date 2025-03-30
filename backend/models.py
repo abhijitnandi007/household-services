@@ -22,6 +22,8 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     active = db.Column(db.Boolean, nullable=False)
+    city = db.Column(db.String(80),nullable=False)
+    pincode = db.Column(db.Integer,nullable=False)
     created_at = db.Column(db.String, default=datetime.now().strftime('%Y-%m-%d %H:%M'))
     fs_uniquifier = db.Column(db.String(65), unique=True, nullable=False)
     

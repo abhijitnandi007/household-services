@@ -48,7 +48,6 @@ export default {
           localStorage.removeItem("id");
           localStorage.removeItem("role");
           this.$emit('logout');
-          this.$router.replace("/");
       })
       .catch(error => console.error("Logout failed:", error));
     }

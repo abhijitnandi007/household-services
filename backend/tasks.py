@@ -40,6 +40,8 @@ def email_report():
                 this_req = {
                     "service_name": req.service.name,
                     "professional_name": req.professional.username,
+                    "city": req.professional.city,
+                    "service_status": req.service_status,
                     "date_of_request": req.date_of_request,
                     "date_of_completion": req.date_of_completion,
                     "time_required": req.service.time_required,

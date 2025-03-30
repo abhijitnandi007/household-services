@@ -9,6 +9,7 @@ import ServiceProfessionals from "./components/Service_by_Prof.js";
 import Admin_Stats from './components/Admin_Stats.js'
 import Prof_Stats from './components/Prof_Stats.js'
 import Customer_Stats from './components/Customer_Stats.js'
+import User_Details from './components/User_Details.js'
 
 const routes = [
     {path: '/',component: Home},
@@ -20,7 +21,9 @@ const routes = [
     {path: "/professionals/:service_name", component: ServiceProfessionals},
     {path: '/adminstats',component: Admin_Stats},
     {path: '/professionalstats',component: Prof_Stats},
-    {path: '/customerstats',component: Customer_Stats}
+    {path: '/customerstats',component: Customer_Stats},
+    {path: '/userdetails/:id',component: User_Details},
+
 
 ]
 
@@ -55,6 +58,7 @@ const app = new Vue({
             this.userRole = null;
             localStorage.removeItem("auth_token");
             localStorage.removeItem("role");
+            this.$router.replace('/');
         }
     }
 });

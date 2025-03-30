@@ -40,7 +40,9 @@ with app.app_context():
         app.security.datastore.create_user(email='admin@iitm.ac.in',
                                            username='Abhijit',
                                            password = hash_password('P@ssword123'),
-                                           roles = ['admin']
+                                           roles = ['admin'],
+                                           city = "Bolpur",
+                                           pincode = 731204
                                            )   
     db.session.commit()
 
@@ -51,16 +53,17 @@ from backend.routes import *
 def setup_periodic_tasks(sender, **kwargs):
     print("Setting up periodic tasks...")
     sender.add_periodic_task(
-        # crontab(0, 0, day_of_month='1'),
-        crontab(),
-        email_report.s(0, 0, day_of_month='1'),
+        crontab(0, 0, day_of_month='1'),       #scheduled monthly report on 1st of every month
+        # crontab(),
+        email_report.s(),
         name="Send Monthly Reports"
     )
 
 #daily notification on gchat
     sender.add_periodic_task(
-        crontab(minute='*/2'),
-        daily_reminder.s(minute=0, hour=18),
+        crontab(minute=0, hour=18),             #daily notifications on gchat scheduled at 6pm
+        # crontab(minute='*/2'),
+        daily_reminder.s(),
         name="daily scheduled messages"
     )
 

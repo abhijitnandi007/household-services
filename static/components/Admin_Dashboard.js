@@ -2,20 +2,20 @@ export default {
     template:`
      <div>
      <br>
-      <h4><strong>Welcome, {{ userdata.username }}</strong></h4>
+      <h4><strong>Welcome Back, {{ userdata.username }}</strong></h4>
  <div class="container mt-4">
         <div class="text-end my-2">
                 <button @click="csvExport" class="btn btn-secondary">Download as CSV</button>
         </div>
         
                 <!-- Professionals Table -->
-        <h3 class="mt-4" class="text-center"><strong>Professionals</strong></h3>
+        <h3 class="mt-4" ><strong>Professionals</strong></h3>
         <div class="mb-2 d-flex">
       <input 
         type="text" 
         class="form-control search-bar" 
         v-model="searchQuery" 
-        placeholder="Search by name or email"
+        placeholder="Search by name or City"
       />
     </div>
         <br>
@@ -25,27 +25,22 @@ export default {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Service</th>
-                    <th>Specialization</th>
-                    <th>Experience (Years)</th>
-                    <th>Rating</th>
+                    <th>City</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="professional in filteredProfessionals" :key="professional.id">
-                    <td>{{ professional.id }}</td>
+                    <td><router-link :to="'/userdetails/' + professional.id">
+                     {{ professional.id }}
+                    </router-link></td>
                     <td>{{ professional.username }}</td>
                     <td>{{ professional.email }}</td>
-                    <td>{{ professional.service }}</td>
-                    <td>{{ professional.specialization[0] }}</td>
-                    <td>{{ professional.experience[0] }}</td>
-                    <td>{{ professional.rating }}</td>
-                    <td>
-                        <span class="badge" :class="{'bg-success': professional.active, 'bg-danger': !professional.active}">
+                    <td>{{ professional.city }}</td>
+                    <td><span class="badge" :class="{'bg-success': professional.active, 'bg-danger': !professional.active}">
                             {{ professional.active ? 'Active' : 'Blocked' }}
-                        </span>
+                    </span>
                     </td>
                     <td>
                         <span>
@@ -64,7 +59,7 @@ export default {
 
         
         <!-- Customers Table -->
-        <h3 class="mt-4" class="text-center"><strong>Customers</strong></h3>
+        <h3 class="mt-4" ><strong>Customers</strong></h3>
         <br>
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
@@ -72,15 +67,19 @@ export default {
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>City</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="customer in customers" :key="customer.id">
-                    <td>{{ customer.id }}</td>
+                    <td><router-link :to="'/userdetails/' + customer.id">
+                     {{ customer.id }}
+                    </router-link></td>
                     <td>{{ customer.username }}</td>
                     <td>{{ customer.email }}</td>
+                    <td>{{ customer.city }}</td>
                     <td>
                         <span class="badge" :class="{'bg-success': customer.active, 'bg-danger': !customer.active}">
                             {{ customer.active ? 'Active' : 'Blocked' }}
@@ -102,7 +101,7 @@ export default {
 
         <!-- Available services Table -->
         <span>
-        <h3 class="mt-4" class="text-center"><strong>Services</strong></h3>
+        <h3 class="mt-4"><strong>Services</strong></h3>
         <button style="float: right;" class="btn btn-success my-3" @click="openServiceModal()"><strong>New Service</strong></button>
         </span>
         <br>
@@ -199,8 +198,8 @@ export default {
         filteredProfessionals() {
           return this.professionals.filter(prof => 
             prof.username.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            prof.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-            prof.service.toLowerCase().includes(this.searchQuery.toLowerCase())
+            prof.service.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            prof.city.toLowerCase().includes(this.searchQuery.toLowerCase())
           );
         }
       },

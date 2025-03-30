@@ -1,7 +1,7 @@
 export default {
     template: `
     <div class="container mt-4">
-        <h3><strong>Welcome, {{ user.username }}</strong></h3>
+        <h3><strong>Welcome Back, {{ user.username }}</strong></h3>
         <br>
 <div id="carouselExampleCaptions" class="carousel slide container-fluid position-relative" data-bs-ride="carousel">
   

@@ -5,6 +5,7 @@ from flask_security import auth_required,roles_required,roles_accepted,current_u
 from flask_login import login_user,logout_user
 from celery.result import AsyncResult
 from .tasks import csv_report,email_report
+from .cache_config import cache
 
 
 @app.route('/api/register',methods=['POST'])
@@ -16,7 +17,9 @@ def create_user():
                                             username=cred["username"],
                                             password = hash_password(cred["password"]),
                                             active = True,
-                                            roles = [cred["roles"]]
+                                            roles = [cred["roles"]],
+                                            city = cred["city"],
+                                            pincode = cred["pincode"]
                                             )  
         else:
             service = Service.query.filter_by(name=cred["service_name"]).first()
@@ -27,7 +30,9 @@ def create_user():
                                             active = False,
                                             experience = cred["experience"],
                                             specialization = cred["specialization"],
-                                            roles = [cred["roles"]]
+                                            roles = [cred["roles"]],
+                                            city = cred["city"],
+                                            pincode = cred["pincode"]
                                             )
         db.session.commit() 
         return jsonify({
@@ -66,13 +71,10 @@ def user_login():
 @app.route('/api/logout', methods=['POST'])
 @auth_required('token')
 def logout():
+
+    cache.clear()
     logout_user()
-
-    # # Create a response and delete session cookies
-    # response = make_response(jsonify({"message": "Logout successful"}))
-    # response.set_cookie("session", "", expires=0, path="/")
-    # response.set_cookie("remember_token", "", expires=0, path="/")
-
+    
     return jsonify({"message":"User logged out successfully!"}), 200
 
 @app.route('/',methods = ['GET'])
@@ -97,7 +99,7 @@ def user_home():
         "role":user.roles[0].name,
         "active":user.active
     })
-
+    
 @app.route('/api/export')
 def export_csv():
     result = csv_report.delay()
@@ -112,8 +114,3 @@ def csv_result(id):
     res = AsyncResult(id)
     return send_from_directory('static/downloads', res.result)
 
-# @app.route('/api/pay/<int:id>')       #payment for serivce request
-# @auth_required('token')
-# @roles_required('customer') 
-# def payment(id):
-#     service_req = ServiceRequest.query.get(id)

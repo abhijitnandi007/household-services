@@ -62,8 +62,10 @@
                     <th>Sr No</th>
                     <th>Service Name</th>
                     <th>Professional</th>
+                    <th>Place of Service</th>
                     <th>Date of Request</th>
                     <th>Date of Completion</th>
+                    <th>Status</th>
                     <th>Price (₹)</th>
                 </tr>
             </thead>
@@ -73,8 +75,10 @@
                     <td>{{ loop.index }}</td> 
                     <td>{{ req.service_name }}</td>
                     <td>{{ req.professional_name }}</td>
+                    <td>{{ req.city }}</td>
                     <td>{{ req.date_of_request }}</td>
                     <td>{{ req.date_of_completion }}</td>
+                    <td>{{ req.service_status }}</td>
                     <td>₹{{ req.price }}</td>
                 </tr>
                 {% endfor %}

@@ -36,7 +36,6 @@ class ServicRequestsApi(Resource):
     @cache.cached(timeout=300, key_prefix='service_requests') 
     @auth_required('token')
     @roles_accepted('admin','customer','professional')
-    # @roles_required('professional')
     def get(self):
         """Fetch all service requests"""
         # print(request.headers)
@@ -162,7 +161,6 @@ class ServiceApi(Resource):
     @auth_required('token')
     @roles_accepted('admin','customer')
     def get(self):
-        # service = []
         service_json = [] 
         
         services = Service.query.all()
@@ -258,6 +256,8 @@ class UserApi(Resource):
                 this_req['id'] = req.id
                 this_req['email'] = req.email
                 this_req['username'] = req.username
+                this_req['city'] = req.city
+                this_req['pincode'] = req.pincode
                 this_req['service'] = req.service.name
                 this_req['rating'] = get_professional_rating(req.id)
                 this_req['experience'] = req.experience,
@@ -271,11 +271,12 @@ class UserApi(Resource):
                 this_req['id'] = req.id
                 this_req['email'] = req.email
                 this_req['username'] = req.username
+                this_req['city'] = req.city
+                this_req['pincode'] = req.pincode
                 this_req['active'] = req.active
                 this_req['created_at'] = req.created_at,
                 this_req['roles'] = [{"name":role.name} for role in req.roles]
                 user_json.append(this_req)
-            # user_json.append(this_req)
         
         if user_json:
             return user_json
@@ -335,6 +336,8 @@ class ProfessionalListApi(Resource):
                     "id": prof.id,
                     "email": prof.email,
                     "username": prof.username,
+                    "city": prof.city,
+                    "pincode" : prof.pincode,
                     "service_name": prof.service.name,
                     "specialization": prof.specialization,
                     "experience": prof.experience,
@@ -348,6 +351,8 @@ class ProfessionalListApi(Resource):
                         "id": prof.id,
                         "email": prof.email,
                         "username": prof.username,
+                        "city": prof.city,
+                        "pincode" : prof.pincode,
                         "service_name": prof.service.name,
                         "specialization": prof.specialization,
                         "experience": prof.experience,
@@ -361,7 +366,6 @@ class ProfessionalListApi(Resource):
         return {"message": "No professionals found for this service"}, 404
 
 class AdminStatsApi(Resource):
-    @cache.cached(timeout=300, key_prefix='admin_stats') 
     @auth_required('token')
     @roles_accepted('admin')
     def get(self):
@@ -399,18 +403,19 @@ class AdminStatsApi(Resource):
                 if rating>0:
                     rating_sum+=rating
                     total_prof+=1
-        if master_record["totalProfessionals"] > 0:
+        if total_prof> 0:
             master_record["averageRating"] = rating_sum/total_prof
+        else:
+            master_record["averageRating"] = 0
         
         return jsonify(master_record)
     
 class ProfStatsApi(Resource):
-    @cache.cached(timeout=300, key_prefix='prof_stat') 
     @auth_required('token')
     @roles_required('professional')
     def get(self):
         """ Fetch stats for logged-in professional """
-        professional = current_user  # Flask-Security provides current_user
+        professional = current_user 
         stats = {
             "totalAssigned": 0,
             "totalCompleted": 0,
@@ -431,12 +436,11 @@ class ProfStatsApi(Resource):
         return jsonify(stats)
     
 class CustomerStatsApi(Resource):
-    @cache.cached(timeout=300, key_prefix='customer_stat') 
     @auth_required('token')
     @roles_required('customer')
     def get(self):
         """ Fetch stats for logged-in customer """
-        customer = current_user  # Flask-Security provides current_user
+        customer = current_user 
         stats = {
             "totalRequests": 0,
             "totalCompleted": 0,
@@ -456,6 +460,38 @@ class CustomerStatsApi(Resource):
 
         return jsonify(stats)
 
+class userdetailsapi(Resource):
+    @auth_required('token')
+    @roles_accepted('admin')
+    def get(self,id):
+        req = User.query.get(id)
+        if req.roles[0].name == "professional":
+            this_req = {}
+            this_req['id'] = req.id
+            this_req['email'] = req.email
+            this_req['username'] = req.username
+            this_req['city'] = req.city
+            this_req['pincode'] = req.pincode
+            this_req['service'] = req.service.name
+            this_req['rating'] = get_professional_rating(req.id)
+            this_req['experience'] = req.experience,
+            this_req['specialization'] = req.specialization,
+            this_req['active'] = req.active
+            this_req['created_at'] = req.created_at,
+            this_req['roles'] = [{"name":role.name} for role in req.roles]
+            return jsonify(this_req)
+        elif req.roles[0].name == "customer":
+            this_req = {}
+            this_req['id'] = req.id
+            this_req['email'] = req.email
+            this_req['username'] = req.username
+            this_req['city'] = req.city
+            this_req['pincode'] = req.pincode
+            this_req['active'] = req.active
+            this_req['created_at'] = req.created_at,
+            this_req['roles'] = [{"name":role.name} for role in req.roles]
+            return jsonify(this_req)
+            
 
 api.add_resource(ServicRequestsApi,'/api/service-request/get','/api/service-request/create','/api/service-request/update/<int:id>','/api/service-request/delete/<int:id>')
 api.add_resource(ServiceApi,'/api/service','/api/service/update/<int:id>','/api/service/delete/<int:id>')
@@ -465,3 +501,4 @@ api.add_resource(ProfessionalListApi, '/api/professionals/<string:service_name>'
 api.add_resource(AdminStatsApi,'/api/admin-stats')
 api.add_resource(ProfStatsApi,'/api/prof-stats')
 api.add_resource(CustomerStatsApi, "/api/customer-stats")
+api.add_resource(userdetailsapi,'/api/user/<int:id>')

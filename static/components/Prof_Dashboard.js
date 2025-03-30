@@ -1,7 +1,8 @@
 export default {
     template: `
     <div class="container mt-4">
-        
+        <h3><strong>Welcome Back, {{userdata.username}}</strong></h3>
+
         <!-- Ongoing Service Requests -->
         <h3 class="mt-4"><strong>Ongoing Services</strong></h3>
         <table class="table table-bordered table-striped">
@@ -74,10 +75,8 @@ export default {
                         <span class="badge" 
                         :class="{
                                 'bg-danger': request.service_status === 'rejected',
-                                'bg-success': request.service_status === 'completed',
-                                'bg-success': request.service_status === 'closed'
-
-                                
+                                'bg-success': request.service_status === 'closed' ||  
+                                request.service_status === 'completed'
                             }">
                         {{ request.service_status }}</span>
                     </td>
